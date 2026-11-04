@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ server.name if server else "Server" }} · Demo Monitoring{% endblock %}
+{% block content %}
+<section class="panel" aria-labelledby="detail-heading">
+  {% if not server %}
+  <h2 id="detail-heading">Server</h2>
+  <p class="banner">Host unreachable</p>
+  {% else %}
+  <div class="card-head">
+    <h2 id="detail-heading">{{ server.name }}</h2>
+    <span>{{ server.hostname }}</span>
+  </div>
+  <p id="unreachable" class="banner" {% if metrics.ok %}hidden{% endif %}>Host unreachable</p>
+  <div id="metrics" class="metrics" {% if not metrics.ok %}hidden{% endif %}>
+    <article>
+      <h3>CPU</h3>
+      <p id="cpu">{{ metrics.cpu_percent }}%</p>
+    </article>
+    <article>
+      <h3>Memory</h3>
+      <p id="memory">{{ metrics.memory_percent }}%</p>
+      <p id="memory-detail" class="muted">{{ metrics.memory_used_bytes }} / {{ metrics.memory_total_bytes }} bytes</p>
+    </article>
+    <article>
+      <h3>Network in</h3>
+      <p id="net-in">{{ metrics.network_in_bytes }} bytes</p>
+    </article>
+    <article>
+      <h3>Network out</h3>
+      <p id="net-out">{{ metrics.network_out_bytes }} bytes</p>
+    </article>
+  </div>
+  <h3>Listening ports</h3>
+  <table>
+    <thead>
+      <tr><th>Port</th><th>Protocol</th><th>Address</th></tr>
+    </thead>
+    <tbody id="ports-body">
+      {% if metrics.ok and metrics.listening_ports %}
+      {% for port in metrics.listening_ports %}
+      <tr>
+        <td>{{ port.port }}</td>
+        <td>{{ port.protocol }}</td>
+        <td>{{ port.address }}</td>
+      </tr>
+      {% endfor %}
+      {% else %}
+      <tr><td colspan="3">No listening ports</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+  {% if not server.local %}
+  <form method="post" action="{{ url_for('delete_server', server_id=server.id) }}">
+    <button type="submit" class="secondary">Remove from list</button>
+  </form>
+  {% endif %}
+  <script
+    src="{{ url_for('static', filename='refresh.js') }}"
+    data-url="{{ url_for('server_metrics', server_id=server.id) }}"
+    data-interval="{{ refresh_ms }}"
+    defer></script>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Demo Monitoring{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Linux servers</p>
+        <h1>Demo Monitoring</h1>
+      </div>
+      {% if session.get("user") %}
+      <nav class="nav">
+        <a href="{{ url_for('dashboard') }}">Servers</a>
+        <a href="{{ url_for('add_server_form') }}">Add server</a>
+        <form method="post" action="{{ url_for('logout') }}">
+          <button type="submit" class="linkish">Sign out</button>
+        </form>
+      </nav>
+      {% endif %}
+    </header>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

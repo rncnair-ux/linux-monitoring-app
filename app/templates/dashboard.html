@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel" aria-labelledby="servers-heading">
+  <h2 id="servers-heading">Servers</h2>
+  <div class="cards">
+    {% for card in cards %}
+    <a class="card" href="{{ url_for('server_detail', server_id=card.server.id) }}">
+      <div class="card-head">
+        <h3>{{ card.server.name }}</h3>
+        <span>{{ card.server.hostname }}</span>
+      </div>
+      {% if card.metrics.ok %}
+      <p>CPU {{ card.metrics.cpu_percent }}% · Memory {{ card.metrics.memory_percent }}%</p>
+      {% else %}
+      <p class="banner">Host unreachable</p>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,12 +1,3 @@
-from flask import Flask, render_template
+from app.routes import create_app
 
-
-def create_app():
-    app = Flask(__name__)
-    app.config["DEBUG"] = False
-
-    @app.get("/")
-    def index():
-        return render_template("index.html")
-
-    return app
+__all__ = ["create_app"]
